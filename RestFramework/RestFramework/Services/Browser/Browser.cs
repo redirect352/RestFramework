@@ -17,7 +17,13 @@ namespace RestFramework.Services.Browser
             this.driver = driver;
         }
 
-        public WebDriver Driver { get; }
+        public WebDriver Driver 
+        {
+            get 
+            {
+                return driver;
+            } 
+        }
 
         public void Quit()
         {

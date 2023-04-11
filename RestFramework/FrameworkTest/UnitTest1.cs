@@ -4,6 +4,7 @@ using OpenQA.Selenium.Chrome;
 using Aquality.Selenium.Configurations.WebDriverSettings;
 using OpenQA.Selenium;
 using System.Diagnostics;
+using RestFramework.Services.Browser; 
 
 namespace FrameworkTest
 {
@@ -16,22 +17,21 @@ namespace FrameworkTest
         }
 
         [Test]
-        public void Test1()
+        public void BrowserCreateTest()
         {
-            string path = BrowserFactory.SetUpDriver(new ChromeConfig(),new ChromeDriverSettings());
+            //string path = BrowserFactory.SetUpDriver(new ChromeConfig(),new ChromeDriverSettings());
 
-            var t =ChromeDriverService.CreateDefaultService(path);
-            var opt = new ChromeOptions();
-            
+            //var t =ChromeDriverService.CreateDefaultService(path);
+            //var opt = new ChromeOptions();
 
 
-            var driver = BrowserFactory.GetDriver<ChromeDriver>
-                            (ChromeDriverService.CreateDefaultService(path),
-                            opt,TimeSpan.FromSeconds(20));
+            Browser browser = BrowserService.Browser;
+            //var driver = BrowserFactory.GetDriver<ChromeDriver>
+            //                (ChromeDriverService.CreateDefaultService(path),
+            //                opt,TimeSpan.FromSeconds(20));
            
-
-            driver.Navigate().GoToUrl("https://google.com");
-            driver.Quit();
+            browser.GoTo("https://google.com");
+            browser.Quit();
             Assert.Pass();
         }
     }

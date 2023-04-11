@@ -12,8 +12,8 @@ namespace RestFramework.Services.Browser.BrowserFactory
         {
             get 
             {
-                return "112.0.5615.49";
-                //return "110.0.5481.30";
+                //return "112.0.5615.49";
+                return "110.0.5481.30";
             } 
         }
 

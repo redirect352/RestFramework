@@ -5,11 +5,6 @@ using System.Threading;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
-using Aquality.Selenium.Configurations.WebDriverSettings;
-using WebDriverManager.Helpers;
-using WebDriverManager;
-using WebDriverManager.DriverConfigs.Impl;
-using Aquality.Selenium.Browsers;
 using RestFramework.Services.Browser.Utils;
 
 namespace RestFramework.Services.Browser.BrowserFactory
@@ -47,9 +42,11 @@ namespace RestFramework.Services.Browser.BrowserFactory
                 SystemArchitecture : 
                 driverSettings.SystemArchitecture;
             var version = driverSettings.WebDriverVersion.Equals
-                          (VersionResolveStrategy.Latest) ? driverConfig.GetLatestVersion() : driverSettings.WebDriverVersion;
-            version = version.Equals(VersionResolveStrategy.MatchingBrowser) ? driverConfig.GetMatchingBrowserVersion() : version;
-            var url = UrlHelper.BuildUrl(architecture.Equals(Architecture.X32) ? driverConfig.GetUrl32() : driverConfig.GetUrl64(), version);
+                          (DriverVersionStrategy.Latest) ? driverConfig.GetLatestVersion() : driverSettings.WebDriverVersion;
+            version = version.Equals(DriverVersionStrategy.MatchingBrowser) ? driverConfig.GetMatchingBrowserVersion() : version;
+            var url = architecture.Equals(Architecture.X32) ? driverConfig.GetUrl32() : driverConfig.GetUrl64(); 
+            url = url.Replace("<version>", version).Replace("<release>", version.Substring(0, version.LastIndexOf(".", StringComparison.CurrentCulture)));
+
             var binaryPath = FilePathUtil.GetDriverDestinationPath(driverConfig.GetName(), version, architecture, driverConfig.GetBinaryName());
             
             if (!File.Exists(binaryPath) || !Environment.GetEnvironmentVariable("PATH").Contains(binaryPath))
