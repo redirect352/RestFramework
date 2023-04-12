@@ -2,19 +2,24 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.DevTools.V109.Network;
 using WebDriverManager.Helpers;
 
 namespace RestFramework.Services.Browser.BrowserFactory
 {
     public class ChromeDriverSettings : IDriverSettings
     {
+        private string webDriverVersion = "MatchingBrowser";
+        private DriverOptions  driverOptions = new ChromeOptions();
+        private PageLoadStrategy strategy = PageLoadStrategy.Default;
+        private string directory = "./downloads";
+
         public string WebDriverVersion 
         {
             get 
             {
-                //return "112.0.5615.49";
-                return "110.0.5481.30";
-            } 
+                return webDriverVersion;
+            }
         }
 
         public Architecture SystemArchitecture 
@@ -29,30 +34,32 @@ namespace RestFramework.Services.Browser.BrowserFactory
         {
             get
             {
-               return new ChromeOptions();
+               return driverOptions;
             }
         }
         public PageLoadStrategy PageLoadStrategy 
         {
             get 
             {
-                return PageLoadStrategy.Default;
+                return strategy;
             } 
         }
 
-        public string DownloadDir 
+        public string DownloadDirectory 
         {
             get 
             {
-                return "D:\\Games";
+                return directory;
             }
         }
-        public string DownloadDirCapabilityKey
+
+        public ChromeDriverSettings(string version,DriverOptions driverOptions1,PageLoadStrategy loadStrategy, string downloadDirectory)
         {
-            get
-            {
-                return "D:\\Games";
-            }
+            webDriverVersion = version;
+            driverOptions = driverOptions1;
+            strategy = loadStrategy;
+            directory = downloadDirectory;
+           
         }
     }
 }

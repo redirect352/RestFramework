@@ -1,5 +1,12 @@
 {
-  "browserName": "chrome",
+  "Level1": "confirmed",
+  "Level2": {
+    "Level21": "confirmed"
+  },
+  "Level3": [ "Ford", "BMW", "Fiat" ],
+  "Level4": {
+    "Level41": [ "Ford", "BMW", "Fiat" ]
+  },
   "driverSettings": {
     "chrome": {
       "webDriverVersion": "Latest",
@@ -19,21 +26,5 @@
       ],
       "pageLoadStrategy": "Normal"
     }
-  },
-  "timeouts": {
-    "timeoutImplicit": 0,
-    "timeoutCondition": 30,
-    "timeoutScript": 10,
-    "timeoutPageLoad": 15,
-    "timeoutPollingInterval": 300,
-    "timeoutCommand": 60
-  },
-  "retry": {
-    "number": 2,
-    "pollingInterval": 300
-  },
-  "logger": {
-    "language": "en",
-    "logPageSource": true
   }
 }

@@ -23,8 +23,6 @@ namespace RestFramework.Services.Browser.BrowserFactory
         //     WebDriver page load strategy.
         PageLoadStrategy PageLoadStrategy { get; }
 
-        string DownloadDir { get; }
-
-        string DownloadDirCapabilityKey { get; }
+        string DownloadDirectory { get; }
     }
 }

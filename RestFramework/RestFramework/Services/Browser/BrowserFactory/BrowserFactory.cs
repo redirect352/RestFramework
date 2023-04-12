@@ -6,6 +6,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 using RestFramework.Services.Browser.Utils;
+using RestFramework.ConfigManager;
 
 namespace RestFramework.Services.Browser.BrowserFactory
 {
@@ -17,11 +18,12 @@ namespace RestFramework.Services.Browser.BrowserFactory
         public static Browser CreateBrowserInstance(string browserName )
         {
             WebDriver driver;
-            switch (browserName)
+            IBrowserProfile browserProfile = ConfigManager.ConfigManager.BrowserProfile;
+            switch (browserProfile.Name)
             {
-                case "chrome":
+                case BrowserType.Chrome:
                     //driverSettings
-                    var driverSettings = new ChromeDriverSettings();
+                    var driverSettings = browserProfile.DriverSettings;
                     var path = SetUpDriver(new ChromeConfig(), driverSettings);
                     driver = GetDriver<ChromeDriver>(ChromeDriverService.CreateDefaultService(path),
                         (ChromeOptions)driverSettings.DriverOptions, commandTimeout);
