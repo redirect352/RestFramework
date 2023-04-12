@@ -11,20 +11,6 @@ namespace RestFramework.Services.Browser.Utils
 {
     public class JsonReader 
     {
-        //public static string[] GetNestedFieldsNames(string fieldName)
-        //{
-        //    CheckPathSet(testDataPath, "Test data file path");
-        //    StreamReader reader = File.OpenText(testDataPath);
-        //    JsonTextReader jsonTextReader = new JsonTextReader(reader);
-        //    JObject jsonObject = (JObject)JToken.ReadFrom(jsonTextReader);
-        //    List<string> result = new List<string>();
-        //    foreach (var jToken in jsonObject[fieldName].Children())
-        //    {
-        //        result.Add(jToken.Path.Substring(jToken.Path.LastIndexOf('.') + 1));
-        //    }
-        //    return result.ToArray();
-        //}
-
         public static string ReadDataField(string jsonText,string JsonPath)
         {
             TextReader reader = new StringReader(jsonText);
