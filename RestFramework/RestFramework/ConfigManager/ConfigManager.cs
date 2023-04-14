@@ -10,20 +10,25 @@ using RestFramework.Services.Browser.BrowserFactory;
 using OpenQA.Selenium.DevTools.V109.Debugger;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
+using RestFramework.Services;
 
 namespace RestFramework.ConfigManager
 {
     public static class ConfigManager
     {
-        private static string SettingsFilePath = AppDomain.CurrentDomain.BaseDirectory + @"Resources\settings.json";
-        private static readonly string chromePath = "driverSettings.chrome"; 
+        private static string settingsFilePath = AppDomain.CurrentDomain.BaseDirectory + @"Resources\settings.json";
+        private static DateTime lastUpdateTime = DateTime.MinValue;
+        private static string settingsFileContent = "";
+        
+        private static readonly string chromeJsonPath = "driverSettings.chrome";
+        private static readonly string retryJsonPath = "retry";
 
         public static IBrowserProfile BrowserProfile 
         {
             get 
             {
                 GetSettingsFilePath();
-                string fileContent = File.ReadAllText(SettingsFilePath);
+                string fileContent = SettingsFileContent;
                 BrowserType type;
                 IDriverSettings driverSettings;
                 var browserName = JsonReader.ReadDataField(fileContent, "browserName");
@@ -31,11 +36,11 @@ namespace RestFramework.ConfigManager
                 {
                     case "chrome":
                         type = BrowserType.Chrome;
-                        string version = JsonReader.ReadDataField(fileContent, $"{chromePath}.webDriverVersion"),
-                               pageLoadStrategy = JsonReader.ReadDataField(fileContent, $"{chromePath}.pageLoadStrategy"),
-                               downloadDirectory = JsonReader.ReadDataField(fileContent, $"{chromePath}.options.download_defaultDirectory");
+                        string version = JsonReader.ReadDataField(fileContent, $"{chromeJsonPath}.webDriverVersion"),
+                               pageLoadStrategy = JsonReader.ReadDataField(fileContent, $"{chromeJsonPath}.pageLoadStrategy"),
+                               downloadDirectory = JsonReader.ReadDataField(fileContent, $"{chromeJsonPath}.options.download_defaultDirectory");
                         var options = new ChromeOptions();
-                        var startArguments = JsonReader.ReadArrayDataField(fileContent, $"{chromePath}.startArguments");
+                        var startArguments = JsonReader.ReadArrayDataField(fileContent, $"{chromeJsonPath}.startArguments");
                         options.AddArguments(startArguments);
                         AddAdditionalOptions(options, fileContent);
                         driverSettings = new ChromeDriverSettings(version, options, PageLoadStrategy.Parse<PageLoadStrategy>(pageLoadStrategy, true),
@@ -44,6 +49,29 @@ namespace RestFramework.ConfigManager
                     default: throw new ArgumentException($"Browser {browserName} not supported");
                 }
                 return new BrowserProfile(type,driverSettings) ;
+            }
+        }
+
+        public static IRetryPolicy GetRetryPolicy() 
+        {
+            GetSettingsFilePath();
+            string fileContent = SettingsFileContent;
+            string number = JsonReader.ReadDataField(fileContent, $"{retryJsonPath}.number"),
+                   pollingInterval = JsonReader.ReadDataField(fileContent, $"{retryJsonPath}.pollingInterval");
+            return new RetryPolicy(int.Parse(number),TimeSpan.FromMilliseconds(double.Parse(pollingInterval));
+        }
+
+        private static string SettingsFileContent 
+        {
+            get 
+            {
+                var newUpdateTime = File.GetLastWriteTime(settingsFilePath);
+                if (settingsFileContent == string.Empty || newUpdateTime != lastUpdateTime)
+                {
+                    settingsFileContent = File.ReadAllText(settingsFilePath); 
+                    lastUpdateTime = newUpdateTime;
+                }
+                return settingsFileContent;
             }
         }
 
@@ -57,12 +85,12 @@ namespace RestFramework.ConfigManager
             {
                 throw new ArgumentException(settinsFilePath,$"File {settinsFilePath} doesnt exists");
             }
-            SettingsFilePath = settinsFilePath;
+            settingsFilePath = settinsFilePath;
         }
 
         private static void AddAdditionalOptions(DriverOptions options, string jsonContent) 
         {
-            var additionaloptions = JsonReader.ReadDictionaryDataField(jsonContent, $"{chromePath}.options");
+            var additionaloptions = JsonReader.ReadDictionaryDataField(jsonContent, $"{chromeJsonPath}.options");
             foreach( var key in additionaloptions.Keys ) 
             {
                 options.AddAdditionalOption( key, additionaloptions[key] );
